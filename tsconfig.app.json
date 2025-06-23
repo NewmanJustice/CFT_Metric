@@ -21,7 +21,10 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Compatibility */
+    "esModuleInterop": true
   },
-  "include": ["src"]
+  "include": ["src", "custom-elements.d.ts"]
 }
