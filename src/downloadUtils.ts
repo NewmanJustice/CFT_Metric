@@ -3,11 +3,15 @@ function flatten(obj: any, prefix = '', res: any = {}) {
   for (const key in obj) {
     const value = obj[key];
     const newKey = prefix ? `${prefix}_${key}` : key;
+<<<<<<< HEAD
     if (Array.isArray(value)) {
       value.forEach((item, idx) => {
         flatten(item, `${newKey}_${idx}`, res);
       });
     } else if (typeof value === 'object' && value !== null && !(value instanceof Date)) {
+=======
+    if (typeof value === 'object' && value !== null && !(value instanceof Date)) {
+>>>>>>> 3778a48 (Resolve README.md merge conflict)
       flatten(value, newKey, res);
     } else {
       res[newKey] = value instanceof Date ? value.toISOString() : value;

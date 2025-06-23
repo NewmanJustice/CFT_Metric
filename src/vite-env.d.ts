@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+<<<<<<< HEAD
 
 // Material Web custom elements for React JSX
 
@@ -33,3 +34,5 @@ declare global {
   }
 }
 export {};
+=======
+>>>>>>> 3778a48 (Resolve README.md merge conflict)
