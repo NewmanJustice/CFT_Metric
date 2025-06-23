@@ -56,8 +56,11 @@ function generateMetrics(type: 'dora' | 'space', count: number, month: string, t
   }
 }
 
-app.post('/api/generate', (req, res) => {
+app.post('/api/generate', (req: express.Request, res: express.Response) => {
   const { metrics, count, month, teams } = req.body;
+  if (!metrics || !Array.isArray(metrics) || metrics.length === 0) {
+    return res.status(400).json({ error: 'Missing metrics' });
+  }
   let data: any = {};
   if (metrics.includes('dora')) {
     data.dora = generateMetrics('dora', count || 10, month, teams);
@@ -68,6 +71,11 @@ app.post('/api/generate', (req, res) => {
   res.json(data);
 });
 
-app.listen(port, () => {
-  console.log(`Backend listening on port ${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`Backend listening on port ${port}`);
+  });
+}
+
+// Export app for testing
+export default app;
