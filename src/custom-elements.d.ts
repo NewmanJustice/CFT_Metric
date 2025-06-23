@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // File intentionally left blank. See vite-env.d.ts for Material Web JSX typings.
 =======
 // TypeScript declarations for Material Web custom elements used in React JSX
@@ -33,3 +34,6 @@ declare namespace JSX {
   }
 }
 >>>>>>> 3778a48 (Resolve README.md merge conflict)
+=======
+// File intentionally left blank. See vite-env.d.ts for Material Web JSX typings.
+>>>>>>> 2543601 (wip)

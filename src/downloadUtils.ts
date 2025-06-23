@@ -4,14 +4,20 @@ function flatten(obj: any, prefix = '', res: any = {}) {
     const value = obj[key];
     const newKey = prefix ? `${prefix}_${key}` : key;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2543601 (wip)
     if (Array.isArray(value)) {
       value.forEach((item, idx) => {
         flatten(item, `${newKey}_${idx}`, res);
       });
     } else if (typeof value === 'object' && value !== null && !(value instanceof Date)) {
+<<<<<<< HEAD
 =======
     if (typeof value === 'object' && value !== null && !(value instanceof Date)) {
 >>>>>>> 3778a48 (Resolve README.md merge conflict)
+=======
+>>>>>>> 2543601 (wip)
       flatten(value, newKey, res);
     } else {
       res[newKey] = value instanceof Date ? value.toISOString() : value;
