@@ -7,6 +7,9 @@ import { downloadCSV, downloadJSON } from './downloadUtils';
 import type { DoraMetric } from './entities/DoraMetric';
 import type { SpaceMetric } from './entities/SpaceMetric';
 import { Card, TextField, Button, Checkbox, CircularProgress, FormControlLabel, Typography } from '@mui/material';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 const METRICS = [
   { key: 'dora', label: 'DORA' },
@@ -103,19 +106,18 @@ function App() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCount(Number(e.target.value))}
             />
           </Card>
-          {/* Month selector */}
+          {/* Month selector using MUI DatePicker */}
           <Card sx={{ flex: 1, minWidth: 260, p: 3, boxSizing: 'border-box' }}>
-            <TextField
-              id="month"
-              name="month"
-              label="Month"
-              type="month"
-              value={month}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMonth(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-              inputProps={{ style: { fontSize: 16, padding: '12px 8px' }, name: 'month' }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                views={['year', 'month']}
+                label="Select Month"
+                value={month ? dayjs(month) : null}
+                onChange={(newValue) => {
+                  if (newValue) setMonth(newValue.format('YYYY-MM'));
+                }}
+              />
+            </LocalizationProvider>
           </Card>
           {/* Team selection */}
           <Card sx={{ flex: 1, minWidth: 260, p: 3, boxSizing: 'border-box' }}>
