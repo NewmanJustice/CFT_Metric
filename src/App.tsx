@@ -6,7 +6,7 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'test') {
 import { downloadCSV, downloadJSON } from './downloadUtils';
 import type { DoraMetric } from './entities/DoraMetric';
 import type { SpaceMetric } from './entities/SpaceMetric';
-import { Card, TextField, Button, Checkbox, CircularProgress, FormControlLabel, Typography } from '@mui/material';
+import { Card, TextField, Button, Checkbox, CircularProgress, FormControlLabel, Typography, Alert } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
@@ -34,6 +34,7 @@ function App() {
   const [month, setMonth] = useState<string>(new Date().toISOString().slice(0, 7));
   const [teamQuery, setTeamQuery] = useState('');
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Pagination state
   const [doraPage, setDoraPage] = useState(1);
@@ -48,15 +49,40 @@ function App() {
     );
   };
 
+  const isValid =
+    selected.length > 0 &&
+    count >= 1 &&
+    count <= 100 &&
+    month &&
+    selectedTeams.length > 0;
+
   const generate = async () => {
+    if (!isValid) {
+      if (selectedTeams.length === 0) {
+        setError('Please select at least one team.');
+      }
+      return;
+    }
+    setError(null);
     setLoading(true);
-    const res = await fetch('http://localhost:4000/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ metrics: selected, count, month, teams: selectedTeams })
-    });
-    const json = await res.json();
-    setData(json);
+    try {
+      const res = await fetch('http://localhost:4000/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metrics: selected, count, month, teams: selectedTeams })
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error || 'Request failed.');
+        setLoading(false);
+        return;
+      }
+      const json = await res.json();
+      setData(json);
+      setError(null);
+    } catch (e) {
+      setError('Request failed.');
+    }
     setLoading(false);
   };
 
@@ -141,7 +167,11 @@ function App() {
                   control={
                     <Checkbox
                       checked={selectedTeams.includes(team)}
-                      onChange={() => setSelectedTeams(sel => sel.includes(team) ? sel.filter(t => t !== team) : [...sel, team])}
+                      onChange={() => setSelectedTeams(sel => {
+                        const updated = sel.includes(team) ? sel.filter(t => t !== team) : [...sel, team];
+                        if (updated.length > 0) setError(null);
+                        return updated;
+                      })}
                     />
                   }
                   label={<span style={{ color: '#111' }}>{team}</span>}
@@ -152,12 +182,17 @@ function App() {
             <div style={{ marginTop: 4, fontSize: 12, color: '#555' }}>
               Selected: {selectedTeams.join(', ') || 'None'}
             </div>
+            {error && (
+              <Alert severity="error" role="alert" sx={{ mt: 1, fontSize: 14 }}>
+                {error}
+              </Alert>
+            )}
           </Card>
         </div>
         {/* Generate button */}
         <form onSubmit={e => { e.preventDefault(); generate(); }} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <Button type="submit" variant="contained" disabled={loading || selected.length === 0} sx={{ width: '100%', maxWidth: 400, minWidth: 140 }}>
+            <Button type="submit" variant="contained" disabled={loading || !isValid} sx={{ width: '100%', maxWidth: 400, minWidth: 140 }}>
               {loading ? <CircularProgress size={24} sx={{ verticalAlign: 'middle' }} /> : 'Generate Data?'}
             </Button>
           </div>
