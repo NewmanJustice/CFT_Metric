@@ -7,17 +7,6 @@ const app = (express as any).default ? (express as any).default() : (express as 
 app.use((cors as any).default ? (cors as any).default() : (cors as any)());
 app.use(app.json ? app.json() : (express as any).json());
 
-function randomTeamName() {
-  const teams = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omega'];
-  return teams[Math.floor(Math.random() * teams.length)];
-}
-function randomMonth() {
-  const now = new Date();
-  const month = now.getMonth() + 1;
-  const year = now.getFullYear();
-  return new Date(`${year}-${month.toString().padStart(2, '0')}-01`);
-}
-
 // Dummy DORA and SPACE metrics generator
 function generateMetrics(type: 'dora' | 'space', count: number, month: string, teams: string[]) {
   // Use provided teams or fallback to default
